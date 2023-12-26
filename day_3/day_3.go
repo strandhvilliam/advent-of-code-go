@@ -16,7 +16,6 @@ const (
 
 type symbol struct {
 	adjacent []point
-	ratio    []part
 	position point
 }
 
@@ -45,19 +44,9 @@ func part1(file string) int {
 		fmt.Println(err)
 	}
 
-	symbols, values := parsePartsAndSymbols(lines, isSymbol)
-
-	sum := 0
-	for _, v := range values {
-		for _, s := range symbols {
-			if containsPosition(s.adjacent, v.positions) {
-				sum += v.value
-				continue
-			}
-		}
-	}
-
-	return sum
+	symbols, parts := parsePartsAndSymbols(lines, isSymbol)
+	result := sumParts(symbols, parts)
+	return result
 }
 
 func part2(filePath string) int {
@@ -67,8 +56,29 @@ func part2(filePath string) int {
 	}
 
 	symbols, parts := parsePartsAndSymbols(lines, isGear)
-	res := sumRatios(symbols, parts)
-	return res
+	result := sumRatios(symbols, parts)
+	return result
+}
+
+func isSymbol(b byte) bool {
+	return string(b) != "." && !unicode.IsDigit(rune(b))
+}
+
+func isGear(b byte) bool {
+	return string(b) == "*"
+}
+
+func sumParts(symbols []symbol, parts []part) int {
+	sum := 0
+	for _, v := range parts {
+		for _, s := range symbols {
+			if containsPosition(s.adjacent, v.positions) {
+				sum += v.value
+				continue
+			}
+		}
+	}
+	return sum
 }
 
 func sumRatios(symbols []symbol, parts []part) int {
@@ -97,14 +107,6 @@ func parseRatios(g symbol, p []part) []part {
 	return ratios
 }
 
-func isSymbol(b byte) bool {
-	return string(b) != "." && !unicode.IsDigit(rune(b))
-}
-
-func isGear(b byte) bool {
-	return string(b) == "*"
-}
-
 func parsePartsAndSymbols(lines []string, checkFn func(byte) bool) ([]symbol, []part) {
 	symbols := make([]symbol, 0)
 	parts := make([]part, 0)
@@ -128,7 +130,6 @@ func getSymbol(lines []string, y int, x int) symbol {
 	s := symbol{
 		adjacent: getAdjacentPos(y, x, lines),
 		position: point{y, x},
-		ratio:    make([]part, 0),
 	}
 	return s
 }

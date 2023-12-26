@@ -22,21 +22,17 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	tests := []struct {
+	test := struct {
 		input    string
 		expected int
 	}{
-		{
-			"example.txt",
-			2286,
-		},
+		"example.txt",
+		2286,
 	}
 
-	for _, test := range tests {
-		result, _ := part2(test.input)
-		if test.expected != result {
-			t.Errorf("For input '%s', expected %v, but got %v", test.input, test.expected, result)
-		}
+	result, _ := part2(test.input)
+	if test.expected != result {
+		t.Errorf("For input '%s', expected %v, but got %v", test.input, test.expected, result)
 	}
 }
 
